@@ -1,0 +1,56 @@
+name: Deploy Infrastructure
+description: Deploys infrastructure using Terraform
+
+inputs:
+  working-directory:
+    description: working directory
+    default: '.'
+  workspace:
+    description: workspace name
+    required: true
+  additional-init-args:
+    description: Terraform CLI args for init
+  additional-apply-args:
+    description: Terraform CLI args for apply
+
+runs:
+  using: composite
+
+  steps:
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+
+    - name: Config Terraform plugin cache
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        echo 'plugin_cache_dir="$HOME/.terraform.d/plugin-cache"' >~/.terraformrc
+        mkdir --parents ~/.terraform.d/plugin-cache
+
+    - name: Cache Terraform
+      uses: actions/cache@v4
+      with:
+        path: |
+          ${{ inputs.working-directory }}/.terraform.d/plugin-cache
+        key: ${{ runner.os }}-terraform-${{ hashFiles('**/.terraform.lock.hcl') }}
+        restore-keys: |
+          ${{ runner.os }}-terraform-
+
+    - name: Initialise Terraform
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        terraform init ${{ inputs.additional-init-args }}
+        terraform workspace select -or-create=true ${{ inputs.workspace }}
+
+    - name: Validate Terraform
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        terraform validate
+
+    - name: Terraform Apply
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        terraform apply -auto-approve -input=false  ${{ inputs.additional-apply-args }}
