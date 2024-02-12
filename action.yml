@@ -8,10 +8,10 @@ inputs:
   workspace:
     description: workspace name
     required: true
-  backend-config-arg:
-    description: Terraform CLI arg for backend configuration
-  var-file-arg:
-    description: Terraform CLI arg for var file
+  additional-init-args:
+    description: Terraform CLI args for init
+  additional-apply-args:
+    description: Terraform CLI args for apply
 
 runs:
   using: composite
@@ -40,7 +40,7 @@ runs:
       shell: bash
       working-directory: ${{ inputs.working-directory }}
       run: |
-        terraform init ${{ inputs.backend-config-arg }}
+        terraform init ${{ inputs.additional-init-args }}
         terraform workspace select -or-create=true ${{ inputs.workspace }}
 
     - name: Validate Terraform
@@ -53,4 +53,4 @@ runs:
       shell: bash
       working-directory: ${{ inputs.working-directory }}
       run: |
-        terraform apply -auto-approve -input=false  ${{ inputs.var-file-arg }}
+        terraform apply -auto-approve -input=false  ${{ inputs.additional-apply-args }}

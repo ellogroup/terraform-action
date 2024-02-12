@@ -5,8 +5,8 @@ GitHub Action to deploy infrastructure using Terraform.
 Features:
 * Allows change of working directory
 * Terraform Validation
-* Supports `-backend-config` arg in `terraform init`
-* Supports `-var-file` arg in `terraform apply`
+* Supports additional args for `terraform init`
+* Supports additional args for `terraform apply`
 
 ## GitHub Action
 
@@ -17,8 +17,8 @@ You can use the terraform GitHub Action by adding the below to your workflow:
   with:
     working-directory: infrastructure
     workspace: dev
-    backend-config-arg: -backend-config=.env/dev.hcl -backend-config="key=dev/dev_terraform.tfstate"
-    var-file-arg: -var-file=.env/dev.tfvars
+    additional-init-args: -backend-config=.env/dev.hcl -backend-config="key=dev/dev_terraform.tfstate"
+    additional-apply-args: -var-file=.env/dev.tfvars
   env:
     TF_VAR_example: value
 ```
