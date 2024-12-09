@@ -12,7 +12,7 @@ inputs:
     description: Terraform CLI args for init
   additional-apply-args:
     description: Terraform CLI args for apply
-  terraform-action:
+  terraform-version:
     description: Specify the Terraform version to use
     default: latest
 
