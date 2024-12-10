@@ -12,6 +12,9 @@ inputs:
     description: Terraform CLI args for init
   additional-apply-args:
     description: Terraform CLI args for apply
+  terraform-version:
+    description: Specify the Terraform version to use
+    default: latest
 
 runs:
   using: composite
@@ -19,6 +22,8 @@ runs:
   steps:
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
+      with:
+          terraform_version: ${{ inputs.terraform-version }}
 
     - name: Config Terraform plugin cache
       shell: bash
